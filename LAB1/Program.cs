@@ -108,8 +108,7 @@ namespace LAB1
             {
                 Console.OutputEncoding = Encoding.UTF8;
                 string inputFilePath = args.Length > 0 ? args[0] : "INPUT.TXT";
-                //string outputFilePath = Path.Combine("LAB1", "OUTPUT.TXT");
-                string outputFilePath = "OUTPUT.TXT";
+                string outputFilePath = Path.Combine("LAB1", "OUTPUT.TXT");                
 
                 // Зчитуємо всі рядки з файлу
                 string[] lines = File.ReadAllLines(inputFilePath);
