@@ -1,2 +1,15 @@
-# CrossPlatformDevelopment
-Laboratory Work on subject Cross Platform App Development by Levchenko Anastasiia IPZ 32
+# CrossPlatformDevelopment  
+Лабораторна робота з дисципліни Розробка кросплатформених додатків  
+Левченко Анастасія ІПЗ 32  
+
+## Вимоги
+- Встановлений .NET SDK (завантажити можна [тут](https://dotnet.microsoft.com/download))
+- MSBuild
+
+## Кроки для завантаження та запуску коду
+Виконайте наступні кроки для завантаження репозиторію та запуску проекту:
+1. Завантажте репозиторій у вигляді ZIP файлу з GitHub.
+2. Перейдіть до директорії проекту:  
+   `cd path/to/extracted-repo`
+3. Зберіть та запустіть проект:  
+   `msbuild Build.proj`
