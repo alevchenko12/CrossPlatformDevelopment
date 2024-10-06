@@ -22,6 +22,6 @@
    dotnet build Build.proj -t:Run -p:Solution=LAB1
    ```
 6. Тестування Лабораторної роботи:
-```bash
+   ```bash
    dotnet build Build.proj -t:Test -p:Solution=LAB1
-```
+   ```
