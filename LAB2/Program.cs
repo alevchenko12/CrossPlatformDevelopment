@@ -91,7 +91,7 @@ namespace LAB2
             try
             {
                 Console.OutputEncoding = Encoding.UTF8;
-                string inputFilePath = args.Length > 0 ? args[0] : "INPUT.TXT";
+                string inputFilePath = args.Length > 0 ? args[0] : Path.Combine("LAB2", "INPUT.TXT");
                 string outputFilePath = Path.Combine("LAB2", "OUTPUT.TXT");
 
                 // Read input from file
