@@ -25,3 +25,4 @@
    ```bash
    dotnet build Build.proj -t:Test -p:Solution=LAB1
    ```
+Де `LAB1` може бути замінена на `LAB2`, щоб запустити лабораторну №2, `LAB3` - лабораторна №3, тощо
