@@ -13,5 +13,16 @@
 2. Відкрийте термінал Developer PowerShell for VS 2022.
 3. Перейдіть до директорії проекту:  
    `cd path/to/extracted-repo`
-4. Зберіть та запустіть проект:  
-   `msbuild Build.proj`
+4. Білд Лабораторної роботи:
+   ```bash
+   dotnet build Build.proj -t:Build -p:Solution=LAB1
+   ```
+5. Запуск Лабораторної роботи:  
+   ```bash
+   dotnet build Build.proj -t:Run -p:Solution=LAB1
+   ```
+6. Тестування Лабораторної роботи:
+   ```bash
+   dotnet build Build.proj -t:Test -p:Solution=LAB1
+   ```
+Де `LAB1` може бути замінена на `LAB2`, щоб запустити лабораторну №2, `LAB3` - лабораторна №3, тощо
