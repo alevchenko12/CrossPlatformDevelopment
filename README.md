@@ -30,4 +30,8 @@
 
 ## LAB #4 INSTRUCTIONS
 ## Команди для запуску у віртуальних середовищах Windows, Ubuntu і MacOS
-dotnet run run lab1
+```bash
+dotnet run run lab1 -input LAB1\INPUT.TXT --output LAB1\OUTPUT.TXT
+```
+Де lab1 може бути замінена на номер бажаної лаби (1-3)
+Також шлях для файлу Output може бути змінений як завгодно 
