@@ -71,7 +71,4 @@ dotnet run --urls "https://0.0.0.0:7180"
 ![image](https://github.com/user-attachments/assets/fc93b8b3-2ffe-40d7-b8b5-62542564fb2d)
 ![image](https://github.com/user-attachments/assets/43b88501-4bd6-405b-9ab9-23a57d1db02b)
 ![image](https://github.com/user-attachments/assets/04112e37-ac9d-4ab6-8b9a-5141e9826eac)
-![image](https://github.com/user-attachments/assets/2be72564-a10b-4ac0-9240-2ad0abc54601)
-
-
-
+![image](https://github.com/user-attachments/assets/725cd680-06a9-49eb-b7eb-aa119bfce7e6)
