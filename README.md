@@ -29,9 +29,13 @@
 Де `LAB1` може бути замінена на `LAB2`, щоб запустити лабораторну №2, `LAB3` - лабораторна №3, тощо
 
 ## LAB #4 INSTRUCTIONS
-## Команди для запуску у віртуальних середовищах Windows, Ubuntu і MacOS
+## Команди для запуску у віртуальних середовищах Windows, Ubuntu
 ```bash
 dotnet run run lab1 -input LAB1\INPUT.TXT --output LAB1\OUTPUT.TXT
 ```
 Де lab1 може бути замінена на номер бажаної лаби (1-3)
 Також шлях для файлу Output може бути змінений як завгодно 
+
+# На жаль, для встановлення Mac OS потрібно мати пристрій від Apple
+[Відповідне посилання з доказом:](https://forums.virtualbox.org/viewtopic.php?f=6&t=92649)
+![image](https://github.com/user-attachments/assets/455c9876-82d3-4182-a14e-33d40122b244)
