@@ -29,7 +29,7 @@
 Де `LAB1` може бути замінена на `LAB2`, щоб запустити лабораторну №2, `LAB3` - лабораторна №3, тощо
 
 ## LAB #4 INSTRUCTIONS
-## Команди для запуску у віртуальних середовищах Windows, Ubuntu
+### Команди для запуску у віртуальних середовищах Windows, Ubuntu
 ```bash
 dotnet run run lab1 -input LAB1\INPUT.TXT --output LAB1\OUTPUT.TXT
 ```
@@ -41,7 +41,7 @@ dotnet run run lab1 -input LAB1\INPUT.TXT --output LAB1\OUTPUT.TXT
 ![image](https://github.com/user-attachments/assets/455c9876-82d3-4182-a14e-33d40122b244)
 
 ## LAB5 INSTRUCTIONS
-# Команди для запуску у віртуальних середовищах Windows, Ubuntu
+### Команди для запуску у віртуальних середовищах Windows, Ubuntu
 1. Запуск віртуальної машини
 ```bash
 vagrant up
