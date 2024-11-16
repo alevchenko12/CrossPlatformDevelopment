@@ -39,3 +39,30 @@ dotnet run run lab1 -input LAB1\INPUT.TXT --output LAB1\OUTPUT.TXT
 ### На жаль, для встановлення Mac OS потрібно мати пристрій від Apple
 [Відповідне посилання з доказом:](https://forums.virtualbox.org/viewtopic.php?f=6&t=92649)
 ![image](https://github.com/user-attachments/assets/455c9876-82d3-4182-a14e-33d40122b244)
+
+## LAB5 INSTRUCTIONS
+# Команди для запуску у віртуальних середовищах Windows, Ubuntu
+1. Запуск віртуальної машини
+```bash
+vagrant up
+```
+2. Підключення до Ubuntu
+```bash
+vagrant ssh ubuntu
+```
+3. Виведення списку директорій
+```bash
+ls
+```
+4. Перехід в директорію з лабами
+```bash
+cd project
+```
+5. Перехід в папку з LAB5
+```bash
+cd LAB5
+```
+6. Запуск веб сайту
+```bash
+dotnet run --urls "https://0.0.0.0:7180"
+```
