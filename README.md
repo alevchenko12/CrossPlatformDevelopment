@@ -66,3 +66,9 @@ cd LAB5
 ```bash
 dotnet run --urls "https://0.0.0.0:7180"
 ```
+Успішний запуск на Ubuntu і на хості:
+![image](https://github.com/user-attachments/assets/62259016-fb31-4a8c-a218-6aba7bcd86ee)
+![image](https://github.com/user-attachments/assets/fc93b8b3-2ffe-40d7-b8b5-62542564fb2d)
+![image](https://github.com/user-attachments/assets/43b88501-4bd6-405b-9ab9-23a57d1db02b)
+![image](https://github.com/user-attachments/assets/04112e37-ac9d-4ab6-8b9a-5141e9826eac)
+![image](https://github.com/user-attachments/assets/725cd680-06a9-49eb-b7eb-aa119bfce7e6)
