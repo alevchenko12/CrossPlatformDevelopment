@@ -6,7 +6,7 @@ using System.Security.Principal;
 using System.Transactions;
 using LAB6.Models;
 
-namespace LAB6.Models.Data
+namespace LAB6.Data
 {
     public class ApplicationDbContext: DbContext
     {
