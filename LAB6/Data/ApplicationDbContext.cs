@@ -8,7 +8,7 @@ using LAB6.Models;
 
 namespace LAB6.Data
 {
-    public class ApplicationDbContext: DbContext
+    public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
@@ -136,18 +136,45 @@ namespace LAB6.Data
 
         public void Seed()
         {
-            if (Brands.Any()) return;
+            if (RefProductTypes.Any()) return;
+
+            // Add a ROOT entry for the hierarchy
+            var rootProductType = new RefProductType
+            {
+                ProductTypeCode = "ROOT",
+                ParentProductCode = "ROOT", // Self-referential to ensure non-NULL
+                ProductTypeDescription = "Root Category"
+            };
+
+            RefProductTypes.Add(rootProductType);
+            SaveChanges();
 
             // 1. Seed Reference Tables
             var refProductTypes = new List<RefProductType>
     {
-        new RefProductType { ProductTypeCode = "ELEC", ParentProductCode = null, ProductTypeDescription = "Electronics" },
-        new RefProductType { ProductTypeCode = "FOOD", ParentProductCode = null, ProductTypeDescription = "Food" },
-        new RefProductType { ProductTypeCode = "TV", ParentProductCode = "ELEC", ProductTypeDescription = "Television" },
+        new RefProductType
+        {
+            ProductTypeCode = "ELEC",
+            ParentProductCode = "ROOT", // Points to ROOT as the parent
+            ProductTypeDescription = "Electronics"
+        },
+        new RefProductType
+        {
+            ProductTypeCode = "FOOD",
+            ParentProductCode = "ROOT", // Points to ROOT as the parent
+            ProductTypeDescription = "Food"
+        },
+        new RefProductType
+        {
+            ProductTypeCode = "TV",
+            ParentProductCode = "ELEC", // Points to ELEC as the parent
+            ProductTypeDescription = "Television"
+        },
     };
             RefProductTypes.AddRange(refProductTypes);
             SaveChanges();
 
+            // 2. Seed RefColours
             var refColours = new List<RefColour>
     {
         new RefColour { ColourCode = "BLK", ColourDescription = "Black" },
@@ -157,7 +184,7 @@ namespace LAB6.Data
             RefColours.AddRange(refColours);
             SaveChanges();
 
-            // 2. Seed Brands
+            // 3. Seed Brands
             var brands = new List<Brand>
     {
         new Brand { BrandName = "Sony", BrandDescription = "Electronics Giant", OtherBrandDetails = "Known for TVs and Cameras" },
@@ -166,7 +193,7 @@ namespace LAB6.Data
             Brands.AddRange(brands);
             SaveChanges();
 
-            // 3. Seed Retailers
+            // 4. Seed Retailers
             var retailers = new List<Retailer>
     {
         new Retailer { RetailerName = "Best Buy", RetailerAddress = "123 Tech Street", RetailerWebSiteUrl = "www.bestbuy.com", OtherRetailerDetails = "Leading Tech Retailer" },
@@ -175,7 +202,7 @@ namespace LAB6.Data
             Retailers.AddRange(retailers);
             SaveChanges();
 
-            // 4. Seed Products
+            // 5. Seed Products
             var products = new List<Product>
     {
         new Product { BrandId = brands[0].BrandId, ProductTypeCode = "TV", ProductName = "Sony Bravia", OtherProductDetails = "4K HDR TV" },
@@ -184,7 +211,7 @@ namespace LAB6.Data
             Products.AddRange(products);
             SaveChanges();
 
-            // 5. Seed Product Colours
+            // 6. Seed Product Colours
             var productColours = new List<ProductColour>
     {
         new ProductColour { ProductId = products[0].ProductId, ColourCode = "BLK", Availability = true },
@@ -193,7 +220,7 @@ namespace LAB6.Data
             ProductColours.AddRange(productColours);
             SaveChanges();
 
-            // 6. Seed Retailer Product Prices
+            // 7. Seed Retailer Product Prices
             var retailerProductPrices = new List<RetailerProductPrice>
     {
         new RetailerProductPrice { ProductId = products[0].ProductId, RetailerId = retailers[0].RetailerId, MinPrice = 500.00M, MaxPrice = 700.00M },
@@ -202,7 +229,7 @@ namespace LAB6.Data
             RetailerProductPrices.AddRange(retailerProductPrices);
             SaveChanges();
 
-            // 7. Seed Special Offers
+            // 8. Seed Special Offers
             var specialOffers = new List<SpecialOffer>
     {
         new SpecialOffer
@@ -220,7 +247,7 @@ namespace LAB6.Data
             SpecialOffers.AddRange(specialOffers);
             SaveChanges();
 
-            // 8. Seed Customers
+            // 9. Seed Customers
             var customers = new List<Customer>
     {
         new Customer
@@ -237,7 +264,7 @@ namespace LAB6.Data
             Customers.AddRange(customers);
             SaveChanges();
 
-            // 9. Seed Customer Orders
+            // 10. Seed Customer Orders
             var customerOrders = new List<CustomerOrder>
     {
         new CustomerOrder
@@ -251,7 +278,7 @@ namespace LAB6.Data
             CustomerOrders.AddRange(customerOrders);
             SaveChanges();
 
-            // 10. Seed Customer Order Products
+            // 11. Seed Customer Order Products
             var customerOrderProducts = new List<CustomerOrderProduct>
     {
         new CustomerOrderProduct
@@ -266,7 +293,7 @@ namespace LAB6.Data
             CustomerOrderProducts.AddRange(customerOrderProducts);
             SaveChanges();
 
-            // 11. Seed Customer Orders Special Offers
+            // 12. Seed Customer Orders Special Offers
             var customerOrdersSpecialOffers = new List<CustomerOrderSpecialOffer>
     {
         new CustomerOrderSpecialOffer
@@ -283,4 +310,5 @@ namespace LAB6.Data
             SaveChanges();
         }
     }
+
 }
