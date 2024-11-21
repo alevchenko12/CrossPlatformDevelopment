@@ -23,16 +23,38 @@ namespace LAB6.Controllers
 
         // GET: api/Brand
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
+        public async Task<ActionResult<IEnumerable<Brand>>> GetBrands(
+            string? search,
+            int? pageNumber,
+            int? pageSize)
         {
-            return await _context.Brands.ToListAsync();
+            IQueryable<Brand> query = _context.Brands;
+
+            // Add Search Filtering
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(b => b.BrandName.Contains(search) ||
+                                         b.BrandDescription.Contains(search));
+            }
+
+            // Add Pagination
+            if (pageNumber.HasValue && pageSize.HasValue)
+            {
+                query = query.Skip((pageNumber.Value - 1) * pageSize.Value)
+                             .Take(pageSize.Value);
+            }
+
+            return await query.ToListAsync();
         }
 
         // GET: api/Brand/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Brand>> GetBrand(int id)
         {
-            var brand = await _context.Brands.FindAsync(id);
+            // Include related Products (JOIN)
+            var brand = await _context.Brands
+                                       .Include(b => b.Products)
+                                       .FirstOrDefaultAsync(b => b.BrandId == id);
 
             if (brand == null)
             {
@@ -43,7 +65,6 @@ namespace LAB6.Controllers
         }
 
         // PUT: api/Brand/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBrand(int id, Brand brand)
         {
@@ -74,7 +95,6 @@ namespace LAB6.Controllers
         }
 
         // POST: api/Brand
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Brand>> PostBrand(Brand brand)
         {

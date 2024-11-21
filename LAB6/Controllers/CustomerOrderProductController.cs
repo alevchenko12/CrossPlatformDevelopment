@@ -21,18 +21,59 @@ namespace LAB6.Controllers
             _context = context;
         }
 
-        // GET: api/CustomerOrderProduct
+        /// <summary>
+        /// Get all customer order products with optional filtering and pagination.
+        /// </summary>
+        /// <param name="orderId">Optional filter by order ID.</param>
+        /// <param name="productId">Optional filter by product ID.</param>
+        /// <param name="pageNumber">Optional page number for pagination.</param>
+        /// <param name="pageSize">Optional page size for pagination.</param>
+        /// <returns>A list of customer order products.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CustomerOrderProduct>>> GetCustomerOrderProducts()
+        public async Task<ActionResult<IEnumerable<CustomerOrderProduct>>> GetCustomerOrderProducts(
+            int? orderId = null,
+            int? productId = null,
+            int pageNumber = 1,
+            int pageSize = 10)
         {
-            return await _context.CustomerOrderProducts.ToListAsync();
+            IQueryable<CustomerOrderProduct> query = _context.CustomerOrderProducts;
+
+            // Apply filters if provided
+            if (orderId.HasValue)
+            {
+                query = query.Where(c => c.OrderId == orderId.Value);
+            }
+
+            if (productId.HasValue)
+            {
+                query = query.Where(c => c.ProductId == productId.Value);
+            }
+
+            // Apply pagination
+            query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            // Include related entities for eager loading
+            var result = await query.Include(c => c.CustomerOrder)
+                                     .Include(c => c.Product)
+                                     .Include(c => c.Retailer)
+                                     .ToListAsync();
+
+            return result;
         }
 
-        // GET: api/CustomerOrderProduct/5
+        /// <summary>
+        /// Get a specific customer order product by id.
+        /// </summary>
+        /// <param name="id">The id of the customer order product.</param>
+        /// <returns>The customer order product if found, otherwise a NotFound result.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerOrderProduct>> GetCustomerOrderProduct(int id)
         {
-            var customerOrderProduct = await _context.CustomerOrderProducts.FindAsync(id);
+            var customerOrderProduct = await _context.CustomerOrderProducts
+                                                     .Include(c => c.CustomerOrder)
+                                                     .Include(c => c.Product)
+                                                     .Include(c => c.Retailer)
+                                                     .FirstOrDefaultAsync(c => c.OrderId == id);
 
             if (customerOrderProduct == null)
             {
@@ -42,14 +83,18 @@ namespace LAB6.Controllers
             return customerOrderProduct;
         }
 
-        // PUT: api/CustomerOrderProduct/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update a customer order product.
+        /// </summary>
+        /// <param name="id">The id of the customer order product to update.</param>
+        /// <param name="customerOrderProduct">The updated customer order product object.</param>
+        /// <returns>No content if successful, or BadRequest if there are errors.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCustomerOrderProduct(int id, CustomerOrderProduct customerOrderProduct)
         {
             if (id != customerOrderProduct.OrderId)
             {
-                return BadRequest();
+                return BadRequest("Order ID mismatch.");
             }
 
             _context.Entry(customerOrderProduct).State = EntityState.Modified;
@@ -73,8 +118,11 @@ namespace LAB6.Controllers
             return NoContent();
         }
 
-        // POST: api/CustomerOrderProduct
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Create a new customer order product.
+        /// </summary>
+        /// <param name="customerOrderProduct">The customer order product object to create.</param>
+        /// <returns>The created customer order product object.</returns>
         [HttpPost]
         public async Task<ActionResult<CustomerOrderProduct>> PostCustomerOrderProduct(CustomerOrderProduct customerOrderProduct)
         {
@@ -83,11 +131,11 @@ namespace LAB6.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
                 if (CustomerOrderProductExists(customerOrderProduct.OrderId))
                 {
-                    return Conflict();
+                    return Conflict(new { message = "Customer order product already exists." });
                 }
                 else
                 {
@@ -98,7 +146,11 @@ namespace LAB6.Controllers
             return CreatedAtAction("GetCustomerOrderProduct", new { id = customerOrderProduct.OrderId }, customerOrderProduct);
         }
 
-        // DELETE: api/CustomerOrderProduct/5
+        /// <summary>
+        /// Delete a customer order product.
+        /// </summary>
+        /// <param name="id">The id of the customer order product to delete.</param>
+        /// <returns>No content if successful, or NotFound if the product does not exist.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCustomerOrderProduct(int id)
         {
@@ -114,6 +166,11 @@ namespace LAB6.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Check if a customer order product exists by id.
+        /// </summary>
+        /// <param name="id">The id of the customer order product to check.</param>
+        /// <returns>True if the customer order product exists, otherwise false.</returns>
         private bool CustomerOrderProductExists(int id)
         {
             return _context.CustomerOrderProducts.Any(e => e.OrderId == id);

@@ -23,16 +23,69 @@ namespace LAB6.Controllers
 
         // GET: api/CustomerOrder
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CustomerOrder>>> GetCustomerOrders()
+        public async Task<ActionResult<IEnumerable<CustomerOrder>>> GetCustomerOrders(
+            string? search,
+            string? orderStatusCode,
+            int? customerId,
+            DateTime? startDate,
+            DateTime? endDate,
+            int? pageNumber,
+            int? pageSize)
         {
-            return await _context.CustomerOrders.ToListAsync();
+            IQueryable<CustomerOrder> query = _context.CustomerOrders
+                                                       .Include(co => co.Customer)
+                                                       .Include(co => co.CustomerOrderProducts)
+                                                       .Include(co => co.CustomerOrderSpecialOffers);
+
+            // Filter by CustomerId
+            if (customerId.HasValue)
+            {
+                query = query.Where(co => co.CustomerId == customerId.Value);
+            }
+
+            // Filter by OrderStatusCode
+            if (!string.IsNullOrEmpty(orderStatusCode))
+            {
+                query = query.Where(co => co.OrderStatusCode == orderStatusCode);
+            }
+
+            // Filter by OrderDate range
+            if (startDate.HasValue)
+            {
+                query = query.Where(co => co.OrderDate >= startDate.Value);
+            }
+
+            if (endDate.HasValue)
+            {
+                query = query.Where(co => co.OrderDate <= endDate.Value);
+            }
+
+            // Search by OrderDetails or CustomerName
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(co => co.OrderDetails.Contains(search) ||
+                                          co.Customer.CustomerName.Contains(search));
+            }
+
+            // Add Pagination
+            if (pageNumber.HasValue && pageSize.HasValue)
+            {
+                query = query.Skip((pageNumber.Value - 1) * pageSize.Value)
+                             .Take(pageSize.Value);
+            }
+
+            return await query.ToListAsync();
         }
 
         // GET: api/CustomerOrder/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerOrder>> GetCustomerOrder(int id)
         {
-            var customerOrder = await _context.CustomerOrders.FindAsync(id);
+            var customerOrder = await _context.CustomerOrders
+                                               .Include(co => co.Customer)
+                                               .Include(co => co.CustomerOrderProducts)
+                                               .Include(co => co.CustomerOrderSpecialOffers)
+                                               .FirstOrDefaultAsync(co => co.OrderId == id);
 
             if (customerOrder == null)
             {
@@ -43,7 +96,6 @@ namespace LAB6.Controllers
         }
 
         // PUT: api/CustomerOrder/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCustomerOrder(int id, CustomerOrder customerOrder)
         {
@@ -74,7 +126,6 @@ namespace LAB6.Controllers
         }
 
         // POST: api/CustomerOrder
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<CustomerOrder>> PostCustomerOrder(CustomerOrder customerOrder)
         {

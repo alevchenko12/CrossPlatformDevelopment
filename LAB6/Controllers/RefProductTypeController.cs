@@ -21,18 +21,48 @@ namespace LAB6.Controllers
             _context = context;
         }
 
-        // GET: api/RefProductType
+        /// <summary>
+        /// Get all product types with optional filtering and pagination.
+        /// </summary>
+        /// <param name="search">Search term for ProductTypeCode or ProductTypeDescription.</param>
+        /// <param name="pageNumber">Page number for pagination.</param>
+        /// <param name="pageSize">Number of items per page.</param>
+        /// <returns>A list of RefProductTypes.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RefProductType>>> GetRefProductTypes()
+        public async Task<ActionResult<IEnumerable<RefProductType>>> GetRefProductTypes(
+            string search = null,
+            int? pageNumber = 1,
+            int? pageSize = 10)
         {
-            return await _context.RefProductTypes.ToListAsync();
+            IQueryable<RefProductType> query = _context.RefProductTypes;
+
+            // Optional search filter for ProductTypeCode or ProductTypeDescription
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(pt => pt.ProductTypeCode.Contains(search) || pt.ProductTypeDescription.Contains(search));
+            }
+
+            // Pagination
+            if (pageNumber.HasValue && pageSize.HasValue)
+            {
+                query = query.Skip((pageNumber.Value - 1) * pageSize.Value)
+                             .Take(pageSize.Value);
+            }
+
+            return await query.ToListAsync();
         }
 
-        // GET: api/RefProductType/5
+        /// <summary>
+        /// Get a specific product type by ProductTypeCode.
+        /// </summary>
+        /// <param name="id">The ProductTypeCode of the reference product type.</param>
+        /// <returns>The RefProductType object if found, or a NotFound result.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<RefProductType>> GetRefProductType(string id)
         {
-            var refProductType = await _context.RefProductTypes.FindAsync(id);
+            var refProductType = await _context.RefProductTypes
+                                                .Include(pt => pt.Products) // Eager loading the related Products
+                                                .FirstOrDefaultAsync(pt => pt.ProductTypeCode == id);
 
             if (refProductType == null)
             {
@@ -42,14 +72,18 @@ namespace LAB6.Controllers
             return refProductType;
         }
 
-        // PUT: api/RefProductType/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update a product type's details.
+        /// </summary>
+        /// <param name="id">The ProductTypeCode of the product type to update.</param>
+        /// <param name="refProductType">The updated RefProductType object.</param>
+        /// <returns>NoContent if update is successful, or BadRequest/NotFound for errors.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRefProductType(string id, RefProductType refProductType)
         {
             if (id != refProductType.ProductTypeCode)
             {
-                return BadRequest();
+                return BadRequest("ProductTypeCode mismatch.");
             }
 
             _context.Entry(refProductType).State = EntityState.Modified;
@@ -73,12 +107,16 @@ namespace LAB6.Controllers
             return NoContent();
         }
 
-        // POST: api/RefProductType
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Add a new product type.
+        /// </summary>
+        /// <param name="refProductType">The new RefProductType object to add.</param>
+        /// <returns>The created RefProductType object.</returns>
         [HttpPost]
         public async Task<ActionResult<RefProductType>> PostRefProductType(RefProductType refProductType)
         {
             _context.RefProductTypes.Add(refProductType);
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -87,7 +125,7 @@ namespace LAB6.Controllers
             {
                 if (RefProductTypeExists(refProductType.ProductTypeCode))
                 {
-                    return Conflict();
+                    return Conflict("ProductTypeCode already exists.");
                 }
                 else
                 {
@@ -98,11 +136,16 @@ namespace LAB6.Controllers
             return CreatedAtAction("GetRefProductType", new { id = refProductType.ProductTypeCode }, refProductType);
         }
 
-        // DELETE: api/RefProductType/5
+        /// <summary>
+        /// Delete a specific product type by ProductTypeCode.
+        /// </summary>
+        /// <param name="id">The ProductTypeCode of the reference product type to delete.</param>
+        /// <returns>NoContent if deletion is successful, or NotFound for errors.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRefProductType(string id)
         {
             var refProductType = await _context.RefProductTypes.FindAsync(id);
+
             if (refProductType == null)
             {
                 return NotFound();
@@ -114,6 +157,11 @@ namespace LAB6.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Check if a reference product type exists by ProductTypeCode.
+        /// </summary>
+        /// <param name="id">The ProductTypeCode to check for existence.</param>
+        /// <returns>True if exists, false otherwise.</returns>
         private bool RefProductTypeExists(string id)
         {
             return _context.RefProductTypes.Any(e => e.ProductTypeCode == id);

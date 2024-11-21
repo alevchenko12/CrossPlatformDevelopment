@@ -23,16 +23,58 @@ namespace LAB6.Controllers
 
         // GET: api/Product
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(
+            int? brandId,
+            string? productTypeCode,
+            string? search,
+            int? pageNumber,
+            int? pageSize)
         {
-            return await _context.Products.ToListAsync();
+            IQueryable<Product> query = _context.Products
+                .Include(p => p.Brand)
+                .Include(p => p.RefProductType)
+                .Include(p => p.ProductColours)
+                .Include(p => p.RetailerProductPrices);
+
+            // Filter by BrandId
+            if (brandId.HasValue)
+            {
+                query = query.Where(p => p.BrandId == brandId.Value);
+            }
+
+            // Filter by ProductTypeCode
+            if (!string.IsNullOrEmpty(productTypeCode))
+            {
+                query = query.Where(p => p.ProductTypeCode == productTypeCode);
+            }
+
+            // Search by ProductName or OtherProductDetails
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(p => p.ProductName.Contains(search) ||
+                                         p.OtherProductDetails.Contains(search));
+            }
+
+            // Pagination
+            if (pageNumber.HasValue && pageSize.HasValue)
+            {
+                query = query.Skip((pageNumber.Value - 1) * pageSize.Value)
+                             .Take(pageSize.Value);
+            }
+
+            return await query.ToListAsync();
         }
 
         // GET: api/Product/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products
+                .Include(p => p.Brand)
+                .Include(p => p.RefProductType)
+                .Include(p => p.ProductColours)
+                .Include(p => p.RetailerProductPrices)
+                .FirstOrDefaultAsync(p => p.ProductId == id);
 
             if (product == null)
             {
@@ -43,7 +85,6 @@ namespace LAB6.Controllers
         }
 
         // PUT: api/Product/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
@@ -74,7 +115,6 @@ namespace LAB6.Controllers
         }
 
         // POST: api/Product
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {

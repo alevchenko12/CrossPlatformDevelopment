@@ -21,18 +21,47 @@ namespace LAB6.Controllers
             _context = context;
         }
 
-        // GET: api/RefColour
+        /// <summary>
+        /// Get all the reference colours with optional filtering and pagination.
+        /// </summary>
+        /// <param name="search">Search term for ColourDescription or ColourCode.</param>
+        /// <param name="pageNumber">Page number for pagination.</param>
+        /// <param name="pageSize">Number of items per page.</param>
+        /// <returns>A list of RefColours.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RefColour>>> GetRefColours()
+        public async Task<ActionResult<IEnumerable<RefColour>>> GetRefColours(
+            string search = null,
+            int? pageNumber = 1,
+            int? pageSize = 10)
         {
-            return await _context.RefColours.ToListAsync();
+            IQueryable<RefColour> query = _context.RefColours;
+
+            // Optional search filter for ColourDescription or ColourCode
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(c => c.ColourDescription.Contains(search) || c.ColourCode.Contains(search));
+            }
+
+            // Pagination
+            if (pageNumber.HasValue && pageSize.HasValue)
+            {
+                query = query.Skip((pageNumber.Value - 1) * pageSize.Value)
+                             .Take(pageSize.Value);
+            }
+
+            return await query.ToListAsync();
         }
 
-        // GET: api/RefColour/5
+        /// <summary>
+        /// Get a specific reference colour by its ColourCode.
+        /// </summary>
+        /// <param name="id">The ColourCode of the reference colour.</param>
+        /// <returns>The RefColour object if found, or a NotFound result.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<RefColour>> GetRefColour(string id)
         {
-            var refColour = await _context.RefColours.FindAsync(id);
+            var refColour = await _context.RefColours
+                                          .FirstOrDefaultAsync(c => c.ColourCode == id);
 
             if (refColour == null)
             {
@@ -42,14 +71,18 @@ namespace LAB6.Controllers
             return refColour;
         }
 
-        // PUT: api/RefColour/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update a reference colour's details.
+        /// </summary>
+        /// <param name="id">The ColourCode of the reference colour to update.</param>
+        /// <param name="refColour">The updated RefColour object.</param>
+        /// <returns>NoContent if update is successful, or BadRequest/NotFound for errors.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRefColour(string id, RefColour refColour)
         {
             if (id != refColour.ColourCode)
             {
-                return BadRequest();
+                return BadRequest("ColourCode mismatch.");
             }
 
             _context.Entry(refColour).State = EntityState.Modified;
@@ -73,12 +106,16 @@ namespace LAB6.Controllers
             return NoContent();
         }
 
-        // POST: api/RefColour
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Add a new reference colour.
+        /// </summary>
+        /// <param name="refColour">The new RefColour object to add.</param>
+        /// <returns>The created RefColour object.</returns>
         [HttpPost]
         public async Task<ActionResult<RefColour>> PostRefColour(RefColour refColour)
         {
             _context.RefColours.Add(refColour);
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -87,7 +124,7 @@ namespace LAB6.Controllers
             {
                 if (RefColourExists(refColour.ColourCode))
                 {
-                    return Conflict();
+                    return Conflict("ColourCode already exists.");
                 }
                 else
                 {
@@ -98,11 +135,16 @@ namespace LAB6.Controllers
             return CreatedAtAction("GetRefColour", new { id = refColour.ColourCode }, refColour);
         }
 
-        // DELETE: api/RefColour/5
+        /// <summary>
+        /// Delete a specific reference colour by ColourCode.
+        /// </summary>
+        /// <param name="id">The ColourCode of the reference colour to delete.</param>
+        /// <returns>NoContent if deletion is successful, or NotFound for errors.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRefColour(string id)
         {
             var refColour = await _context.RefColours.FindAsync(id);
+
             if (refColour == null)
             {
                 return NotFound();
@@ -114,6 +156,11 @@ namespace LAB6.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Check if a reference colour exists by ColourCode.
+        /// </summary>
+        /// <param name="id">The ColourCode to check for existence.</param>
+        /// <returns>True if exists, false otherwise.</returns>
         private bool RefColourExists(string id)
         {
             return _context.RefColours.Any(e => e.ColourCode == id);
