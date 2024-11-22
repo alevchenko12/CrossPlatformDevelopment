@@ -1,0 +1,33 @@
+﻿@model IEnumerable<LAB5.Models.Product>
+
+@{
+    ViewData["Title"] = "Product List";
+}
+
+<h2>Product List</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Brand Name</th>
+            <th>Product Type</th>
+            <th>Details</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.ProductName</td>
+                <td>@product.Brand?.BrandName</td>
+                <td>@product.RefProductType?.ProductTypeDescription</td>
+                <td>@product.OtherProductDetails</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-primary">View Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

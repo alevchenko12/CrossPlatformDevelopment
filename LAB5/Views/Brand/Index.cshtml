@@ -1,0 +1,24 @@
+﻿@model IEnumerable<LAB5.Models.Brand>
+
+<h2>Brands</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Brand Name</th>
+            <th>Description</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var brand in Model)
+        {
+            <tr>
+                <td>@brand.BrandName</td>
+                <td>@brand.BrandDescription</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@brand.BrandId" class="btn btn-primary">View Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
