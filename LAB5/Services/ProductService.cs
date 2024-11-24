@@ -16,7 +16,6 @@ namespace LAB5.Services
             _httpClient = httpClient;
         }
 
-        // Fetch all products with optional filtering and pagination
         public async Task<IEnumerable<Product>> GetProductsAsync(int? brandId = null, string? productTypeCode = null, string? search = null, int? pageNumber = null, int? pageSize = null)
         {
             var queryParams = new List<string>();
@@ -40,7 +39,6 @@ namespace LAB5.Services
             return await response.Content.ReadFromJsonAsync<IEnumerable<Product>>();
         }
 
-        // Fetch a single product by ID
         public async Task<Product> GetProductByIdAsync(int id)
         {
             var response = await _httpClient.GetAsync($"Product/{id}");
@@ -49,7 +47,6 @@ namespace LAB5.Services
             return await response.Content.ReadFromJsonAsync<Product>();
         }
 
-        // Create a new product
         public async Task<Product> CreateProductAsync(Product product)
         {
             var response = await _httpClient.PostAsJsonAsync("Product", product);
@@ -58,14 +55,12 @@ namespace LAB5.Services
             return await response.Content.ReadFromJsonAsync<Product>();
         }
 
-        // Update an existing product
         public async Task UpdateProductAsync(int id, Product product)
         {
             var response = await _httpClient.PutAsJsonAsync($"Product/{id}", product);
             response.EnsureSuccessStatusCode();
         }
 
-        // Delete a product by ID
         public async Task DeleteProductAsync(int id)
         {
             var response = await _httpClient.DeleteAsync($"Product/{id}");

@@ -1,0 +1,26 @@
+﻿@model LAB5.Models.CustomerOrder
+
+<h2>Order Details</h2>
+
+<div>
+    <label>Order ID:</label>
+    <span>@Model.OrderId</span>
+</div>
+<div>
+    <label>Customer ID:</label>
+    <span>@Model.CustomerId</span>
+</div>
+<div>
+    <label>Status Code:</label>
+    <span>@Model.OrderStatusCode</span>
+</div>
+<div>
+    <label>Order Details:</label>
+    <span>@Model.OrderDetails</span>
+</div>
+<div>
+    <label>Order Date:</label>
+    <span>@Model.OrderDate</span>
+</div>
+
+<a href="/CustomerOrder">Back to Orders</a>

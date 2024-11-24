@@ -1,0 +1,23 @@
+﻿@model LAB5.Models.Retailer
+
+@{
+    ViewData["Title"] = "Retailer Details";
+}
+
+<h1>Details for @Model.RetailerName</h1>
+
+<p><strong>Address:</strong> @Model.RetailerAddress</p>
+<p>
+    <strong>Website:</strong>
+    @if (!string.IsNullOrWhiteSpace(Model.RetailerWebSiteUrl))
+    {
+        <a href="@Model.RetailerWebSiteUrl" target="_blank">@Model.RetailerWebSiteUrl</a>
+    }
+    else
+    {
+        <span>N/A</span>
+    }
+</p>
+<p><strong>Other Details:</strong> @Model.OtherRetailerDetails</p>
+
+<a href="@Url.Action("Index", "Retailer")" class="btn btn-primary">Back to Retailers</a>

@@ -8,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
-// Register ProductService with HttpClient
 builder.Services.AddHttpClient<ProductService>(client =>
 {
     var baseUrl = builder.Configuration["ApiSettings:BaseUrl"];
@@ -16,8 +15,22 @@ builder.Services.AddHttpClient<ProductService>(client =>
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 
-// Register BrandService with HttpClient
 builder.Services.AddHttpClient<BrandService>(client =>
+{
+    var baseUrl = builder.Configuration["ApiSettings:BaseUrl"];
+    client.BaseAddress = new Uri(baseUrl);
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+
+builder.Services.AddHttpClient<RetailerService>(client =>
+{
+    var baseUrl = builder.Configuration["ApiSettings:BaseUrl"];
+    client.BaseAddress = new Uri(baseUrl);
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+
+
+builder.Services.AddHttpClient<CustomerOrderService>(client =>
 {
     var baseUrl = builder.Configuration["ApiSettings:BaseUrl"];
     client.BaseAddress = new Uri(baseUrl);
